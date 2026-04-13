@@ -100,19 +100,17 @@ function openPDF(link) {
     return;
   }
 
-  // If Google Drive link
+  // Google Drive fix
   if (link.includes("drive.google.com")) {
     const match = link.match(/\/d\/(.*?)\//);
-
     if (match && match[1]) {
       const fileId = match[1];
-
-      // BEST working format for most browsers
       link = `https://drive.google.com/file/d/${fileId}/preview`;
     }
   }
 
-  window.open(link, "_blank");
+  // Force navigation instead of popup
+  window.location.href = link;
 }
 
 
