@@ -1,7 +1,7 @@
 {
   "name": "Medical Guidelines",
   "short_name": "Guidelines",
-  "start_url": ".",
+  "start_url": "/guideline-app/",
   "display": "standalone",
   "background_color": "#2e7d32",
   "theme_color": "#2e7d32",
