@@ -113,6 +113,17 @@ function openPDF(link) {
   window.location.href = link;
 }
 
+function openPDF(pdfUrl) {
+  if (!navigator.onLine) {
+    alert("You are offline. PDFs require internet connection.");
+    return;
+  }
+
+  document.getElementById("loader").style.display = "block";
+
+  const viewerUrl = `https://docs.google.com/gview?embedded=true&url=${pdfUrl}`;
+  window.location.href = viewerUrl;
+}
 
 // 🔍 SEARCH
 document.addEventListener("input", e => {
