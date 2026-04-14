@@ -8,21 +8,18 @@ fetch(sheetURL)
   .then(csv => {
     const rows = csv.split("\n").map(r => r.split(","));
 
-    allItems = [];
+    allItems = rows.slice(1).map(r => ({
+      category: r[1] || "",
+      subcategory: r[2] || "",
+      title: r[3] || "",
+      description: r[4] || "",
+      source: r[5] || "",
+      link: r[6] || "",
+      offline: r[7] || "",
+      updated: r[8] || ""
+    }));
 
-    rows.slice(1).forEach(r => {
-      allItems.push({
-        category: r[1] || "",
-        subcategory: r[2] || "",
-        title: r[3] || "",
-        description: r[4] || "",
-        source: r[5] || "",
-        link: r[6] || "",
-        offline: r[7] || "",
-        updated: r[8] || ""
-      });
-    });
-
+    document.getElementById("loader").style.display = "none";
     showCategories();
   })
   .catch(err => {
@@ -32,7 +29,7 @@ fetch(sheetURL)
   });
 
 
-// 🏠 SHOW CATEGORY HOME
+// 🏠 CATEGORIES
 function showCategories() {
   const categories = [...new Set(allItems.map(i => i.category))];
 
@@ -54,20 +51,20 @@ function showCategories() {
 }
 
 
-// 📂 OPEN CATEGORY
+// 📂 CATEGORY
 function openCategory(cat) {
   const filtered = allItems.filter(i => i.category === cat);
   display(filtered, cat);
 }
 
 
-// 📋 DISPLAY GUIDELINES
+// 📋 DISPLAY ITEMS
 function display(items, categoryName = "") {
   let html = "";
 
   html += `
     <button onclick="showCategories()" style="
-      margin-bottom:10px;
+      margin:10px 0;
       padding:8px 12px;
       border:none;
       border-radius:8px;
@@ -86,8 +83,7 @@ function display(items, categoryName = "") {
         <div>
           <div class="title">${i.title}</div>
           <div class="meta">
-            ${i.source ? i.source : ""} 
-            ${i.updated ? " • " + i.updated : ""}
+            ${i.source || ""} ${i.updated ? " • " + i.updated : ""}
           </div>
         </div>
         <div class="arrow">→</div>
@@ -99,22 +95,26 @@ function display(items, categoryName = "") {
 }
 
 
-// 📄 OPEN PDF (clean version)
-function openPDF(pdfUrl) {
-  if (!pdfUrl) {
+// 📄 OPEN PDF
+function openPDF(url) {
+  if (!url) {
     alert("No PDF linked.");
     return;
   }
 
   if (!navigator.onLine) {
-    alert("You are offline. PDFs require internet connection.");
+    alert("You are offline.");
     return;
   }
 
-  document.getElementById("loader").style.display = "block";
+  document.getElementById("loader").style.display = "flex";
 
-  const viewerUrl = `https://docs.google.com/gview?embedded=true&url=${pdfUrl}`;
-  window.location.href = viewerUrl;
+  const viewer = `https://docs.google.com/gview?embedded=true&url=${url}`;
+
+  setTimeout(() => {
+    window.location.href = viewer;
+    document.getElementById("loader").style.display = "none";
+  }, 300);
 }
 
 
@@ -123,10 +123,7 @@ document.addEventListener("input", e => {
   if (e.target.id === "search") {
     const q = e.target.value.toLowerCase();
 
-    if (!q) {
-      showCategories();
-      return;
-    }
+    if (!q) return showCategories();
 
     const filtered = allItems.filter(i =>
       i.title.toLowerCase().includes(q) ||
