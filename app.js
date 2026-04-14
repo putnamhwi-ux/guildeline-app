@@ -41,8 +41,11 @@ function showCategories() {
   categories.forEach(cat => {
     html += `
       <div class="card" onclick="openCategory('${cat}')">
-        <div class="title">${cat}</div>
-        <div class="meta">Tap to view guidelines</div>
+        <div>
+          <div class="title">${cat}</div>
+          <div class="meta">Tap to view guidelines</div>
+        </div>
+        <div class="arrow">→</div>
       </div>
     `;
   });
@@ -62,7 +65,6 @@ function openCategory(cat) {
 function display(items, categoryName = "") {
   let html = "";
 
-  // Back button
   html += `
     <button onclick="showCategories()" style="
       margin-bottom:10px;
@@ -81,11 +83,14 @@ function display(items, categoryName = "") {
   items.forEach(i => {
     html += `
       <div class="card" onclick="openPDF('${i.link}')">
-        <div class="title">${i.title}</div>
-        <div class="meta">
-          ${i.source ? i.source : ""} 
-          ${i.updated ? " • " + i.updated : ""}
+        <div>
+          <div class="title">${i.title}</div>
+          <div class="meta">
+            ${i.source ? i.source : ""} 
+            ${i.updated ? " • " + i.updated : ""}
+          </div>
         </div>
+        <div class="arrow">→</div>
       </div>
     `;
   });
@@ -94,26 +99,13 @@ function display(items, categoryName = "") {
 }
 
 
-function openPDF(link) {
-  if (!link) {
+// 📄 OPEN PDF (clean version)
+function openPDF(pdfUrl) {
+  if (!pdfUrl) {
     alert("No PDF linked.");
     return;
   }
 
-  // Google Drive fix
-  if (link.includes("drive.google.com")) {
-    const match = link.match(/\/d\/(.*?)\//);
-    if (match && match[1]) {
-      const fileId = match[1];
-      link = `https://drive.google.com/file/d/${fileId}/preview`;
-    }
-  }
-
-  // Force navigation instead of popup
-  window.location.href = link;
-}
-
-function openPDF(pdfUrl) {
   if (!navigator.onLine) {
     alert("You are offline. PDFs require internet connection.");
     return;
@@ -124,6 +116,7 @@ function openPDF(pdfUrl) {
   const viewerUrl = `https://docs.google.com/gview?embedded=true&url=${pdfUrl}`;
   window.location.href = viewerUrl;
 }
+
 
 // 🔍 SEARCH
 document.addEventListener("input", e => {
