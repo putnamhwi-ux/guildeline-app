@@ -107,16 +107,11 @@ function openPDF(url) {
     return;
   }
 
-  document.getElementById("loader").style.display = "flex";
-
   const viewer = `https://docs.google.com/gview?embedded=true&url=${url}`;
 
-  setTimeout(() => {
-    window.location.href = viewer;
-    document.getElementById("loader").style.display = "none";
-  }, 300);
+  // Navigate immediately
+  window.location.href = viewer;
 }
-
 
 // 🔍 SEARCH
 document.addEventListener("input", e => {
