@@ -1,9 +1,9 @@
 {
-  "name": "Medical Guidelines",
-  "short_name": "Guidelines",
-  "start_url": "/guildeline-app/",
+  "name": "Anaesthesia Hub",
+  "short_name": "Anaesthesia",
+  "start_url": ".",
   "display": "standalone",
-  "background_color": "#2e7d32",
+  "background_color": "#fff8e6",
   "theme_color": "#2e7d32",
   "icons": [
     {
