@@ -3,63 +3,59 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Medical Guidelines</title>
+  
+  <title>Anaesthesia Hub</title>
 
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#2e7d32">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#2e7d32">
 
-<link rel="apple-touch-icon" href="icons/icon-192.png">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
 
-<link rel="icon" href="icons/icon-192.png">
-
-</head>
+  <link rel="icon" href="icons/icon-192.png">
 
   <style>
     body {
       font-family: Arial, sans-serif;
       margin: 0;
-      padding: 15px;
+      padding: 0;
       background: #fff8e6;
     }
 
-    h1 {
-      text-align: center;
-      color: #5a3e00;
-    }
-
-    #search {
-      width: 100%;
-      padding: 12px;
-      font-size: 16px;
-      margin: 15px 0;
-      border-radius: 8px;
-      border: 1px solid #e0c97f;
-      background: #fffdf5;
-    }
-
-    #filters {
-      text-align: center;
-      margin-bottom: 15px;
-    }
-
-    #filters button {
-      margin: 5px;
-      padding: 8px 12px;
-      border: none;
-      border-radius: 20px;
-      background: #f4c542;
-      color: #5a3e00;
-      cursor: pointer;
-      font-weight: bold;
-    }
-
-    #content {
+    /* Header */
+    .header {
+      padding: 16px;
       max-width: 800px;
       margin: auto;
     }
 
+    h1 {
+      margin: 0 0 12px 0;
+      font-size: 24px;
+      color: #5a3e00;
+    }
+
+    /* Search */
+    #search {
+      width: 100%;
+      padding: 10px;
+      font-size: 14px;
+      border-radius: 10px;
+      border: 1px solid #e0c97f;
+      background: #fffdf5;
+      outline: none;
+      box-sizing: border-box;
+    }
+
+    /* Content wrapper */
+    #content {
+      max-width: 800px;
+      margin: auto;
+      padding: 0 16px 20px 16px;
+    }
+
+    /* Cards */
     .card {
       background: #fff3cc;
       border: 1px solid #f0d98a;
@@ -67,16 +63,21 @@
       padding: 14px;
       margin-bottom: 12px;
       cursor: pointer;
-      transition: 0.1s;
+
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      transition: 0.15s ease;
     }
 
     .card:hover {
       transform: scale(1.01);
-      box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+      box-shadow: 0 3px 10px rgba(0,0,0,0.08);
     }
 
     .title {
-      font-size: 17px;
+      font-size: 16px;
       font-weight: bold;
       color: #4a3200;
     }
@@ -84,32 +85,59 @@
     .meta {
       font-size: 12px;
       color: #7a5a00;
-      margin-top: 5px;
+      margin-top: 4px;
+    }
+
+    .arrow {
+      font-size: 18px;
+      color: #b08900;
+      margin-left: 10px;
+    }
+
+    /* Loader */
+    #loader {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(255,255,255,0.95);
+      z-index: 9999;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 18px;
+      color: #5a3e00;
     }
   </style>
 </head>
 
 <body>
-  
-  <div id="loader" style="display:none;">
-  Loading guideline...
-</div>
 
-  <h1>Medical Guidelines</h1>
+  <!-- LOADER -->
+  <div id="loader">Loading guideline...</div>
 
-  <input type="text" id="search" placeholder="Search guidelines..." />
+  <!-- HEADER -->
+  <div class="header">
+    <h1>Anaesthesia Hub</h1>
+    <input type="text" id="search" placeholder="Search guidelines..." />
+  </div>
 
-  <div id="filters"></div>
-
+  <!-- CONTENT -->
   <div id="content"></div>
 
+  <!-- APP SCRIPT -->
   <script src="app.js"></script>
 
-<script>
-  if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("service-worker.js")
-      .then(() => console.log("Service Worker Registered"));
-  }
-</script>
+  <!-- SERVICE WORKER -->
+  <script>
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("service-worker.js")
+        .then(() => console.log("Service Worker Registered"));
+    }
+  </script>
+
 </body>
 </html>
