@@ -19,7 +19,6 @@ fetch(sheetURL)
       updated: r[8] || ""
     }));
 
-    document.getElementById("loader").style.display = "none";
     showCategories();
   })
   .catch(err => {
@@ -29,20 +28,33 @@ fetch(sheetURL)
   });
 
 
-// 🏠 CATEGORIES
+// 🏠 SHOW CATEGORIES
 function showCategories() {
-  const categories = [...new Set(allItems.map(i => i.category))];
+  let categories = [...new Set(allItems.map(i => i.category))];
+
+  // Move Emergency to top
+  categories = categories.sort((a, b) => {
+    if (a.toLowerCase() === "emergency") return -1;
+    if (b.toLowerCase() === "emergency") return 1;
+    return a.localeCompare(b);
+  });
 
   let html = "";
 
   categories.forEach(cat => {
+    const isEmergency = cat.toLowerCase() === "emergency";
+
     html += `
-      <div class="card" onclick="openCategory('${cat}')">
+      <div class="card" 
+           onclick="openSubcategories('${cat}')"
+           style="${isEmergency ? 'background:#ffdddd;border:1px solid #ff4d4d;' : ''}">
         <div>
-          <div class="title">${cat}</div>
-          <div class="meta">Tap to view guidelines</div>
+          <div class="title" style="${isEmergency ? 'color:#b30000;' : ''}">
+            ${cat}
+          </div>
+          <div class="meta">Tap to view sections</div>
         </div>
-        <div class="arrow">→</div>
+        <div class="arrow" style="${isEmergency ? 'color:#b30000;' : ''}">→</div>
       </div>
     `;
   });
@@ -51,17 +63,15 @@ function showCategories() {
 }
 
 
-// 📂 CATEGORY
-function openCategory(cat) {
-  const filtered = allItems.filter(i => i.category === cat);
-  display(filtered, cat);
-}
+// 📂 OPEN SUBCATEGORIES
+function openSubcategories(category) {
+  const filtered = allItems.filter(i => i.category === category);
 
+  let subcategories = [...new Set(filtered.map(i => i.subcategory))];
 
-// 📋 DISPLAY ITEMS
-function display(items, categoryName = "") {
   let html = "";
 
+  // Back button
   html += `
     <button onclick="showCategories()" style="
       margin:10px 0;
@@ -75,9 +85,48 @@ function display(items, categoryName = "") {
     ">← Back</button>
   `;
 
-  html += `<h2 style="color:#5a3e00;">${categoryName}</h2>`;
+  html += `<h2 style="color:#5a3e00;">${category}</h2>`;
 
-  items.forEach(i => {
+  subcategories.forEach(sub => {
+    html += `
+      <div class="card" onclick="openGuidelines('${category}', '${sub}')">
+        <div>
+          <div class="title">${sub || "General"}</div>
+          <div class="meta">Tap to view guidelines</div>
+        </div>
+        <div class="arrow">→</div>
+      </div>
+    `;
+  });
+
+  document.getElementById("content").innerHTML = html;
+}
+
+
+// 📋 OPEN GUIDELINES
+function openGuidelines(category, subcategory) {
+  const filtered = allItems.filter(i =>
+    i.category === category && i.subcategory === subcategory
+  );
+
+  let html = "";
+
+  html += `
+    <button onclick="openSubcategories('${category}')" style="
+      margin:10px 0;
+      padding:8px 12px;
+      border:none;
+      border-radius:8px;
+      background:#f4c542;
+      color:#5a3e00;
+      font-weight:bold;
+      cursor:pointer;
+    ">← Back</button>
+  `;
+
+  html += `<h2 style="color:#5a3e00;">${subcategory || "General"}</h2>`;
+
+  filtered.forEach(i => {
     html += `
       <div class="card" onclick="openPDF('${i.link}')">
         <div>
@@ -108,12 +157,11 @@ function openPDF(url) {
   }
 
   const viewer = `https://docs.google.com/gview?embedded=true&url=${url}`;
-
-  // Navigate immediately
-  window.location.href = viewer;
+  window.open(viewer, "_blank");
 }
 
-// 🔍 SEARCH
+
+// 🔍 SEARCH (still works globally)
 document.addEventListener("input", e => {
   if (e.target.id === "search") {
     const q = e.target.value.toLowerCase();
@@ -126,6 +174,20 @@ document.addEventListener("input", e => {
       i.subcategory.toLowerCase().includes(q)
     );
 
-    display(filtered, "Search Results");
+    let html = `<h2 style="color:#5a3e00;">Search Results</h2>`;
+
+    filtered.forEach(i => {
+      html += `
+        <div class="card" onclick="openPDF('${i.link}')">
+          <div>
+            <div class="title">${i.title}</div>
+            <div class="meta">${i.category} • ${i.subcategory}</div>
+          </div>
+          <div class="arrow">→</div>
+        </div>
+      `;
+    });
+
+    document.getElementById("content").innerHTML = html;
   }
 });
