@@ -166,12 +166,13 @@ function openPDF(url) {
     return;
   }
 
-    // ✅ If it's a Google Form → open directly
+  // ✅ If it's a Google Form → open directly
   if (url.includes("docs.google.com/forms")) {
     window.open(url, "_blank");
     return;
   }
 
+  // ✅ Otherwise treat as PDF
   const viewer = `https://docs.google.com/gview?embedded=true&url=${url}`;
   window.open(viewer, "_blank");
 }
