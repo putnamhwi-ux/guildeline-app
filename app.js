@@ -156,6 +156,11 @@ function openPDF(url) {
     return;
   }
 
+    // ✅ If it's a Google Form → open directly
+  if (url.includes("docs.google.com/forms")) {
+    window.open(url, "_blank");
+    return;
+
   const viewer = `https://docs.google.com/gview?embedded=true&url=${url}`;
   window.open(viewer, "_blank");
 }
