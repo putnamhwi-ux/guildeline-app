@@ -69,9 +69,18 @@ function openSubcategories(category) {
 
   let subcategories = [...new Set(filtered.map(i => i.subcategory))];
 
+  // 🔥 Remove empty values
+  subcategories = subcategories.filter(s => s && s.trim() !== "");
+
+  // ✅ If NO subcategories → go straight to guidelines
+  if (subcategories.length === 0) {
+    openGuidelines(category, "");
+    return;
+  }
+
+  // Otherwise show subcategory screen
   let html = "";
 
-  // Back button
   html += `
     <button onclick="showCategories()" style="
       margin:10px 0;
@@ -91,7 +100,7 @@ function openSubcategories(category) {
     html += `
       <div class="card" onclick="openGuidelines('${category}', '${sub}')">
         <div>
-          <div class="title">${sub || "General"}</div>
+          <div class="title">${sub}</div>
           <div class="meta">Tap to view guidelines</div>
         </div>
         <div class="arrow">→</div>
@@ -101,7 +110,6 @@ function openSubcategories(category) {
 
   document.getElementById("content").innerHTML = html;
 }
-
 
 // 📋 OPEN GUIDELINES
 function openGuidelines(category, subcategory) {
