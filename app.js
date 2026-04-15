@@ -67,21 +67,24 @@ function showCategories() {
 function openSubcategories(category) {
   const filtered = allItems.filter(i => i.category === category);
 
-  let subcategories = [...new Set(filtered.map(i => i.subcategory))];
+  // Clean + normalize subcategories
+  let subcategories = filtered
+    .map(i => (i.subcategory || "").trim())
+    .filter(s => s !== "" && s.toLowerCase() !== "null" && s.toLowerCase() !== "undefined");
 
-  // 🔥 Remove empty values
-  subcategories = subcategories.filter(s => s && s.trim() !== "");
+  // Unique values
+  subcategories = [...new Set(subcategories)];
 
-  // ✅ If NO subcategories → go straight to guidelines
+  console.log("Subcategories:", subcategories); // DEBUG
+
+  // ✅ If NONE → go straight to guidelines
   if (subcategories.length === 0) {
     openGuidelines(category, "");
     return;
   }
 
   // Otherwise show subcategory screen
-  let html = "";
-
-  html += `
+  let html = `
     <button onclick="showCategories()" style="
       margin:10px 0;
       padding:8px 12px;
@@ -110,16 +113,16 @@ function openSubcategories(category) {
 
   document.getElementById("content").innerHTML = html;
 }
-
 // 📋 OPEN GUIDELINES
 function openGuidelines(category, subcategory) {
-  const filtered = allItems.filter(i =>
-    i.category === category && i.subcategory === subcategory
-  );
+  const filtered = allItems.filter(i => {
+    if (!subcategory) {
+      return i.category === category;
+    }
+    return i.category === category && i.subcategory === subcategory;
+  });
 
-  let html = "";
-
-  html += `
+  let html = `
     <button onclick="openSubcategories('${category}')" style="
       margin:10px 0;
       padding:8px 12px;
@@ -132,7 +135,7 @@ function openGuidelines(category, subcategory) {
     ">← Back</button>
   `;
 
-  html += `<h2 style="color:#5a3e00;">${subcategory || "General"}</h2>`;
+  html += `<h2 style="color:#5a3e00;">${subcategory || category}</h2>`;
 
   filtered.forEach(i => {
     html += `
@@ -150,7 +153,6 @@ function openGuidelines(category, subcategory) {
 
   document.getElementById("content").innerHTML = html;
 }
-
 
 // 📄 OPEN PDF
 function openPDF(url) {
